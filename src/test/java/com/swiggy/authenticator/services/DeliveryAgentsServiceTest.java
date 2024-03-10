@@ -81,5 +81,15 @@ public class DeliveryAgentsServiceTest {
         verify(this.mockedDeliveryAgentsDao, times(1)).findALlByStatus(DeliveryAgentStatus.AVAILABLE);
     }
 
+    @Test
+    public void test_shouldFetchAllDeliveryAgentsWithGivenPincodeAndStatus(){
+        List<DeliveryAgent> deliveryAgents = new ArrayList<DeliveryAgent>(List.of(this.testDeliveryAgent));
+        when(this.mockedDeliveryAgentsDao.findALlByCurrentLocationPincodeAndStatus(TEST_DELIVERY_AGENT_PINCODE, DeliveryAgentStatus.AVAILABLE)).thenReturn(deliveryAgents);
 
+        assertDoesNotThrow(()->{
+            List<DeliveryAgent> fetchedList = this.deliveryAgentsService.fetchAll(Optional.of(TEST_DELIVERY_AGENT_PINCODE), Optional.of(DeliveryAgentStatus.AVAILABLE));
+            assertEquals(deliveryAgents, fetchedList);
+        });
+        verify(this.mockedDeliveryAgentsDao, times(1)).findALlByCurrentLocationPincodeAndStatus(TEST_DELIVERY_AGENT_PINCODE, DeliveryAgentStatus.AVAILABLE);
+    }
 }
