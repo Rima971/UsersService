@@ -33,10 +33,16 @@ public class DeliveryAgentUpdate {
     @Column(nullable = false)
     private String updatedValue;
 
-    public DeliveryAgentUpdate(DeliveryAgent deliveryAgent, DeliveryAgentUpdateType type, String updatedValue) {
+    public DeliveryAgentUpdate(DeliveryAgent deliveryAgent, DeliveryAgentUpdateType type, int currentLocationPincode) {
         this.deliveryAgent = deliveryAgent;
         this.type = type;
-        this.updatedValue = updatedValue;
+        this.update(currentLocationPincode);
+    }
+
+    public DeliveryAgentUpdate(DeliveryAgent deliveryAgent, DeliveryAgentUpdateType type, DeliveryAgentStatus status) {
+        this.deliveryAgent = deliveryAgent;
+        this.type = type;
+        this.update(status);
     }
 
     private void update(int currentLocationPincode){
