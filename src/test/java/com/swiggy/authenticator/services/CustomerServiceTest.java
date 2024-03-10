@@ -78,4 +78,15 @@ public class CustomerServiceTest {
         verify(this.customersDao, times(1)).findAll();
     }
 
+    @Test
+    public void test_shouldFetchAllCustomersWithGivenUserId(){
+        List<Customer> customers = new ArrayList<Customer>(List.of(this.testCustomer));
+        when(this.customersDao.findAllByUserId(TEST_USER_ID)).thenReturn(customers);
+
+        assertDoesNotThrow(()->{
+            List<Customer> fetchedList = this.customersService.fetchAll(Optional.of(TEST_USER_ID));
+            assertEquals(customers, fetchedList);
+        });
+        verify(this.customersDao, times(1)).findAllByUserId(TEST_USER_ID);
+    }
 }
