@@ -2,6 +2,7 @@ package com.swiggy.authenticator.services;
 
 import com.swiggy.authenticator.dtos.DeliveryAgentDto;
 import com.swiggy.authenticator.entities.DeliveryAgent;
+import com.swiggy.authenticator.enums.DeliveryAgentStatus;
 import com.swiggy.authenticator.repositories.DeliveryAgentsDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -67,4 +68,18 @@ public class DeliveryAgentsServiceTest {
         });
         verify(this.mockedDeliveryAgentsDao, times(1)).findALlByCurrentLocationPincode(TEST_DELIVERY_AGENT_PINCODE);
     }
+
+    @Test
+    public void test_shouldFetchAllDeliveryAgentsWithGivenStatus(){
+        List<DeliveryAgent> deliveryAgents = new ArrayList<DeliveryAgent>(List.of(this.testDeliveryAgent, this.testDeliveryAgent));
+        when(this.mockedDeliveryAgentsDao.findALlByStatus(DeliveryAgentStatus.AVAILABLE)).thenReturn(deliveryAgents);
+
+        assertDoesNotThrow(()->{
+            List<DeliveryAgent> fetchedList = this.deliveryAgentsService.fetchAll(Optional.empty(), Optional.of(DeliveryAgentStatus.AVAILABLE));
+            assertEquals(deliveryAgents, fetchedList);
+        });
+        verify(this.mockedDeliveryAgentsDao, times(1)).findALlByStatus(DeliveryAgentStatus.AVAILABLE);
+    }
+
+
 }
