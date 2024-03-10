@@ -2,7 +2,7 @@ package com.swiggy.authenticator.services;
 
 import com.swiggy.authenticator.dtos.CustomerDto;
 import com.swiggy.authenticator.entities.Customer;
-import com.swiggy.authenticator.exceptions.CustomerNotFound;
+import com.swiggy.authenticator.exceptions.CustomerNotFoundException;
 import com.swiggy.authenticator.repositories.CustomersDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,7 +47,7 @@ public class CustomersServiceTest {
 
     @Test
     public void test_shouldFetchACustomer(){
-        when(this.mockedCustomersDao.findById(anyInt())).thenReturn(Optional.ofNullable(this.testCustomer));
+        when(this.mockedCustomersDao.findById(anyInt())).thenReturn(Optional.of(this.testCustomer));
 
         assertDoesNotThrow(()->{
             Customer foundCustomer = this.customersService.fetch(TEST_CUSTOMER_ID);
@@ -60,7 +60,7 @@ public class CustomersServiceTest {
     public void test_shouldThrowCustomerNotFoundWhenCustomerWithGivenIdDoesNotExist(){
         when(this.mockedCustomersDao.findById(anyInt())).thenReturn(Optional.empty());
 
-        assertThrows(CustomerNotFound.class, ()->this.customersService.fetch(TEST_CUSTOMER_ID));
+        assertThrows(CustomerNotFoundException.class, ()->this.customersService.fetch(TEST_CUSTOMER_ID));
     }
 
     @Test

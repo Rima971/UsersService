@@ -2,7 +2,7 @@ package com.swiggy.authenticator.services;
 
 import com.swiggy.authenticator.dtos.CustomerDto;
 import com.swiggy.authenticator.entities.Customer;
-import com.swiggy.authenticator.exceptions.CustomerNotFound;
+import com.swiggy.authenticator.exceptions.CustomerNotFoundException;
 import com.swiggy.authenticator.repositories.CustomersDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,8 +19,8 @@ public class CustomersService {
         return this.customersDao.save(customer);
     }
 
-    public Customer fetch(int customerId){
-        return this.customersDao.findById(customerId).orElseThrow(CustomerNotFound::new);
+    public Customer fetch(int customerId) throws CustomerNotFoundException {
+        return this.customersDao.findById(customerId).orElseThrow(CustomerNotFoundException::new);
     }
 
     public List<Customer> fetchAll(Optional<Integer> userId){

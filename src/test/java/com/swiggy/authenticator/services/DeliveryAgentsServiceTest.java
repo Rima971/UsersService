@@ -3,6 +3,7 @@ package com.swiggy.authenticator.services;
 import com.swiggy.authenticator.dtos.DeliveryAgentDto;
 import com.swiggy.authenticator.entities.DeliveryAgent;
 import com.swiggy.authenticator.enums.DeliveryAgentStatus;
+import com.swiggy.authenticator.exceptions.DeliveryAgentNotFoundException;
 import com.swiggy.authenticator.repositories.DeliveryAgentsDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,6 +56,24 @@ public class DeliveryAgentsServiceTest {
             assertEquals(customers, fetchedList);
         });
         verify(this.mockedDeliveryAgentsDao, times(1)).findAll();
+    }
+
+    @Test
+    public void test_shouldFetchADeliveryAgent(){
+        when(this.mockedDeliveryAgentsDao.findById(anyInt())).thenReturn(Optional.of(this.testDeliveryAgent));
+
+        assertDoesNotThrow(()->{
+            DeliveryAgent fouundDeliveryAgent = this.deliveryAgentsService.fetch(TEST_CUSTOMER_ID);
+            assertEquals(fouundDeliveryAgent, this.testDeliveryAgent);
+        });
+        verify(this.mockedDeliveryAgentsDao, times(1)).findById(TEST_CUSTOMER_ID);
+    }
+
+    @Test
+    public void test_shouldThrowDeliveryAgentNotFoundWhenDeliveryAgentWithGivenIdDoesNotExist(){
+        when(this.mockedDeliveryAgentsDao.findById(anyInt())).thenReturn(Optional.empty());
+
+        assertThrows(DeliveryAgentNotFoundException.class, ()->this.deliveryAgentsService.fetch(TEST_CUSTOMER_ID));
     }
 
     @Test

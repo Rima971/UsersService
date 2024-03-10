@@ -3,6 +3,7 @@ package com.swiggy.authenticator.services;
 import com.swiggy.authenticator.dtos.DeliveryAgentDto;
 import com.swiggy.authenticator.entities.DeliveryAgent;
 import com.swiggy.authenticator.enums.DeliveryAgentStatus;
+import com.swiggy.authenticator.exceptions.DeliveryAgentNotFoundException;
 import com.swiggy.authenticator.repositories.DeliveryAgentsDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,9 @@ public class DeliveryAgentsService {
         return this.deliveryAgentsDao.save(customer);
     }
 
-
+    public DeliveryAgent fetch(int deliveryAgentId) throws DeliveryAgentNotFoundException {
+        return this.deliveryAgentsDao.findById(deliveryAgentId).orElseThrow(DeliveryAgentNotFoundException::new);
+    }
     public List<DeliveryAgent> fetchAll(Optional<Integer> pincode, Optional<DeliveryAgentStatus> status){
         if (pincode.isPresent() && status.isPresent()){
             return this.deliveryAgentsDao.findALlByCurrentLocationPincodeAndStatus(pincode.get(), status.get());
