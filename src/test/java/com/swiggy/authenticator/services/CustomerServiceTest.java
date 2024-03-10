@@ -2,6 +2,7 @@ package com.swiggy.authenticator.services;
 
 import com.swiggy.authenticator.dtos.CustomerDto;
 import com.swiggy.authenticator.entities.Customer;
+import com.swiggy.authenticator.exceptions.CustomerNotFound;
 import com.swiggy.authenticator.repositories.CustomersDao;
 import jakarta.persistence.Table;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,8 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.util.Optional;
 
 import static com.swiggy.authenticator.TestConstants.*;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.openMocks;
@@ -55,6 +55,13 @@ public class CustomerServiceTest {
             assertEquals(foundCustomer, this.testCustomer);
         });
         verify(this.customersDao, times(1)).findById(TEST_CUSTOMER_ID);
+    }
+
+    @Test
+    public void test_shouldThrowCustomerNotFoundWhenCustomerWithGivenIdDoesNotExist(){
+        when(this.customersDao.findById(anyInt())).thenReturn(Optional.empty());
+
+        assertThrows(CustomerNotFound.class, ()->this.customersService.fetch(TEST_CUSTOMER_ID));
     }
 
 }
