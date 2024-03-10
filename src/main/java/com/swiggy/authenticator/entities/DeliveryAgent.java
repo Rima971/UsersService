@@ -1,5 +1,6 @@
 package com.swiggy.authenticator.entities;
 
+import com.swiggy.authenticator.enums.DeliveryAgentStatus;
 import com.swiggy.authenticator.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -17,6 +18,10 @@ public class DeliveryAgent {
 
     @Column(nullable = false)
     private int currentLocationPincode;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private DeliveryAgentStatus status = DeliveryAgentStatus.AVAILABLE;
 
     public DeliveryAgent(String username, String password, int currentLocationPincode) {
         this.user = new User(username, password, UserRole.DELIVERY_AGENT);
