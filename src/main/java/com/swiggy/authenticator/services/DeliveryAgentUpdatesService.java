@@ -20,7 +20,7 @@ public class DeliveryAgentUpdatesService {
     @Autowired
     private DeliveryAgentUpdatesDao deliveryAgentUpdatesDao;
 
-    public DeliveryAgent create(int deliveryAgentId, DeliveryAgentUpdateType type, DeliveryAgentUpdateDto dto) throws LocationMissingException, StatusMissingException, DeliveryAgentNotFoundException {
+    public DeliveryAgentUpdate create(int deliveryAgentId, DeliveryAgentUpdateType type, DeliveryAgentUpdateDto dto) throws LocationMissingException, StatusMissingException, DeliveryAgentNotFoundException {
         DeliveryAgent deliveryAgent = this.deliveryAgentsService.fetch(deliveryAgentId);
 
         switch (type){
@@ -29,16 +29,14 @@ public class DeliveryAgentUpdatesService {
                     throw new LocationMissingException();
                 }
                 DeliveryAgentUpdate update = new DeliveryAgentUpdate(deliveryAgent, type, dto.getCurrentLocationPincode().get());
-                DeliveryAgentUpdate savedUpdate = this.deliveryAgentUpdatesDao.save(update);
-                return savedUpdate.getDeliveryAgent();
+                return this.deliveryAgentUpdatesDao.save(update);
             }
             case DeliveryAgentUpdateType.STATUS -> {
                 if (dto.getStatus().isEmpty()){
                     throw new StatusMissingException();
                 }
                 DeliveryAgentUpdate update = new DeliveryAgentUpdate(deliveryAgent, type, dto.getStatus().get());
-                DeliveryAgentUpdate savedUpdate = this.deliveryAgentUpdatesDao.save(update);
-                return savedUpdate.getDeliveryAgent();
+                return this.deliveryAgentUpdatesDao.save(update);
             }
         }
         throw new UnsupportedTypeException();
