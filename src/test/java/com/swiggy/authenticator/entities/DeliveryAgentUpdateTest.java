@@ -28,4 +28,14 @@ public class DeliveryAgentUpdateTest {
         verify(this.mockedDeliveryAgent, never()).setStatus(any(DeliveryAgentStatus.class));
     }
 
+    @Test
+    public void test_shouldUpdateDeliveryAgentStatus(){
+        assertDoesNotThrow(()->{
+            new DeliveryAgentUpdate(this.mockedDeliveryAgent, DeliveryAgentUpdateType.LOCATION, DeliveryAgentStatus.ENGAGED);
+        });
+        assertEquals(TEST_DELIVERY_AGENT_PINCODE, this.mockedDeliveryAgent.getCurrentLocationPincode());
+        assertEquals(DeliveryAgentStatus.ENGAGED, this.mockedDeliveryAgent.getStatus());
+        verify(this.mockedDeliveryAgent, never()).setCurrentLocationPincode(TEST_DELIVERY_AGENT_PINCODE+1);
+        verify(this.mockedDeliveryAgent, times(1)).setStatus(any(DeliveryAgentStatus.class));
+    }
 }
