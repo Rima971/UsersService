@@ -44,18 +44,18 @@ public class DeliveryAgentsServiceTest {
         verify(this.mockedDeliveryAgentsDao, times(1)).save(any(DeliveryAgent.class));
     }
 
-//    @Test
-//    public void test_shouldFetchAllDeliveryAgents(){
-//        List<DeliveryAgent> customers = new ArrayList<DeliveryAgent>(List.of(this.testDeliveryAgent));
-//        when(this.mockedDeliveryAgentsDao.findAll()).thenReturn(customers);
-//
-//        assertDoesNotThrow(()->{
-//            List<DeliveryAgent> fetchedList = this.deliveryAgentsService.fetchAll(Optional.empty());
-//            assertEquals(customers, fetchedList);
-//        });
-//        verify(this.mockedDeliveryAgentsDao, times(1)).findAll();
-//    }
-//
+    @Test
+    public void test_shouldFetchAllDeliveryAgentsWhenNoFilterCriteriaGiven(){
+        List<DeliveryAgent> customers = new ArrayList<DeliveryAgent>(List.of(this.testDeliveryAgent));
+        when(this.mockedDeliveryAgentsDao.findAll()).thenReturn(customers);
+
+        assertDoesNotThrow(()->{
+            List<DeliveryAgent> fetchedList = this.deliveryAgentsService.fetchAll(Optional.empty(), Optional.empty());
+            assertEquals(customers, fetchedList);
+        });
+        verify(this.mockedDeliveryAgentsDao, times(1)).findAll();
+    }
+
 //    @Test
 //    public void test_shouldFetchAllDeliveryAgentsWithGivenUserId(){
 //        List<DeliveryAgent> customers = new ArrayList<DeliveryAgent>(List.of(this.testDeliveryAgent));
