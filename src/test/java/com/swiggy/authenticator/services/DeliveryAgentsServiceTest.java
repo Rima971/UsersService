@@ -56,15 +56,15 @@ public class DeliveryAgentsServiceTest {
         verify(this.mockedDeliveryAgentsDao, times(1)).findAll();
     }
 
-//    @Test
-//    public void test_shouldFetchAllDeliveryAgentsWithGivenUserId(){
-//        List<DeliveryAgent> customers = new ArrayList<DeliveryAgent>(List.of(this.testDeliveryAgent));
-//        when(this.mockedDeliveryAgentsDao.findAllByUserId(TEST_USER_ID)).thenReturn(customers);
-//
-//        assertDoesNotThrow(()->{
-//            List<DeliveryAgent> fetchedList = this.deliveryAgentsService.fetchAll(Optional.of(TEST_USER_ID));
-//            assertEquals(customers, fetchedList);
-//        });
-//        verify(this.mockedDeliveryAgentsDao, times(1)).findAllByUserId(TEST_USER_ID);
-//    }
+    @Test
+    public void test_shouldFetchAllDeliveryAgentsWithGivenPincode(){
+        List<DeliveryAgent> deliveryAgents = new ArrayList<DeliveryAgent>(List.of(this.testDeliveryAgent));
+        when(this.mockedDeliveryAgentsDao.findALlByCurrentLocationPincode(TEST_DELIVERY_AGENT_PINCODE)).thenReturn(deliveryAgents);
+
+        assertDoesNotThrow(()->{
+            List<DeliveryAgent> fetchedList = this.deliveryAgentsService.fetchAll(Optional.of(TEST_DELIVERY_AGENT_PINCODE), Optional.empty());
+            assertEquals(deliveryAgents, fetchedList);
+        });
+        verify(this.mockedDeliveryAgentsDao, times(1)).findALlByCurrentLocationPincode(TEST_DELIVERY_AGENT_PINCODE);
+    }
 }

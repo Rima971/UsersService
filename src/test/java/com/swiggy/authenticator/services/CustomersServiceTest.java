@@ -64,7 +64,7 @@ public class CustomersServiceTest {
     }
 
     @Test
-    public void test_shouldFetchAllCustomers(){
+    public void test_shouldFetchAllCustomersWhenNoFilterCriteriaIsGiven(){
         List<Customer> customers = new ArrayList<Customer>(List.of(this.testCustomer));
         when(this.mockedCustomersDao.findAll()).thenReturn(customers);
 
