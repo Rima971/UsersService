@@ -1,6 +1,7 @@
 package com.swiggy.authenticator.dtos;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 public class CustomerDto extends UserDto {
