@@ -12,6 +12,8 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static com.swiggy.authenticator.TestConstants.*;
@@ -62,6 +64,18 @@ public class CustomerServiceTest {
         when(this.customersDao.findById(anyInt())).thenReturn(Optional.empty());
 
         assertThrows(CustomerNotFound.class, ()->this.customersService.fetch(TEST_CUSTOMER_ID));
+    }
+
+    @Test
+    public void test_shouldFetchAllCustomers(){
+        List<Customer> customers = new ArrayList<Customer>(List.of(this.testCustomer));
+        when(this.customersDao.findAll()).thenReturn(customers);
+
+        assertDoesNotThrow(()->{
+            List<Customer> fetchedList = this.customersService.fetchAll(Optional.empty());
+            assertEquals(customers, fetchedList);
+        });
+        verify(this.customersDao, times(1)).findAll();
     }
 
 }
