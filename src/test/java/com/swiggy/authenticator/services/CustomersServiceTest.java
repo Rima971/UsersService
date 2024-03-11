@@ -1,6 +1,6 @@
 package com.swiggy.authenticator.services;
 
-import com.swiggy.authenticator.dtos.CustomerDto;
+import com.swiggy.authenticator.dtos.CustomerRequestDto;
 import com.swiggy.authenticator.entities.Customer;
 import com.swiggy.authenticator.exceptions.CustomerNotFoundException;
 import com.swiggy.authenticator.repositories.CustomersDao;
@@ -36,7 +36,7 @@ public class CustomersServiceTest {
     @Test
     public void test_shouldCreateACustomer(){
         when(this.mockedCustomersDao.save(any(Customer.class))).thenReturn(this.testCustomer);
-        CustomerDto request = new CustomerDto(TEST_CUSTOMER_USERNAME, TEST_CUSTOMER_PASSWORD, TEST_CUSTOMER_PINCODE);
+        CustomerRequestDto request = new CustomerRequestDto(TEST_CUSTOMER_USERNAME, TEST_CUSTOMER_PASSWORD, TEST_CUSTOMER_PINCODE);
 
         assertDoesNotThrow(()->{
             Customer savedCustomer = this.customersService.create(request);

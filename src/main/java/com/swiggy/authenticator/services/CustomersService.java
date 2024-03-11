@@ -1,6 +1,6 @@
 package com.swiggy.authenticator.services;
 
-import com.swiggy.authenticator.dtos.CustomerDto;
+import com.swiggy.authenticator.dtos.CustomerRequestDto;
 import com.swiggy.authenticator.entities.Customer;
 import com.swiggy.authenticator.exceptions.CustomerNotFoundException;
 import com.swiggy.authenticator.repositories.CustomersDao;
@@ -14,7 +14,7 @@ import java.util.Optional;
 public class CustomersService {
     @Autowired
     private CustomersDao customersDao;
-    public Customer create(CustomerDto dto){
+    public Customer create(CustomerRequestDto dto){
         Customer customer = new Customer(dto.getUsername(), dto.getPassword(), dto.getDeliveryLocationPincode());
         return this.customersDao.save(customer);
     }
