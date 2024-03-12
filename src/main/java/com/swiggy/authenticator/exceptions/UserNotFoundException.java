@@ -1,7 +1,11 @@
 package com.swiggy.authenticator.exceptions;
 
-public class UserNotFoundException extends RuntimeException {
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import static com.swiggy.authenticator.constants.ErrorMessage.USERNAME_NOT_FOUND;
+
+public class UserNotFoundException extends UsernameNotFoundException {
     public UserNotFoundException() {
-        super();
+        super(USERNAME_NOT_FOUND);
     }
 }

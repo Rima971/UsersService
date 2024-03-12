@@ -13,7 +13,7 @@ public class UsersService implements UserDetailsService {
     @Autowired
     private UsersDao usersDao;
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public CustomUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user =  this.usersDao.findByUsername(username).orElseThrow(UserNotFoundException::new);
         return new CustomUserDetails(user);
     }

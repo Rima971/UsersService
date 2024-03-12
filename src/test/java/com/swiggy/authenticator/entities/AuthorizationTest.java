@@ -8,6 +8,7 @@ import org.mockito.Mock;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.swiggy.authenticator.TestConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,7 +28,7 @@ public class AuthorizationTest {
     public void test_shouldAuthorizeAnUserWithTheAcceptableRole(){
         List<UserRole> roles = new ArrayList<>(List.of(UserRole.ADMIN, UserRole.CUSTOMER));
         User user = new User(TEST_USERNAME, TEST_PASSWORD, UserRole.ADMIN);
-        when(this.usersDao.findByUsername(TEST_USERNAME)).thenReturn(user);
+        when(this.usersDao.findByUsername(TEST_USERNAME)).thenReturn(Optional.of(user));
 
         assertDoesNotThrow(()->{
             Authorization authorization = new Authorization(user, roles);
@@ -39,7 +40,7 @@ public class AuthorizationTest {
     public void test_shouldNotAuthorizesAnUserWithTheNonAcceptableRole(){
         List<UserRole> roles = new ArrayList<>(List.of(UserRole.ADMIN, UserRole.CUSTOMER));
         User user = new User(TEST_USERNAME, TEST_PASSWORD, UserRole.DELIVERY_AGENT);
-        when(this.usersDao.findByUsername(TEST_USERNAME)).thenReturn(user);
+        when(this.usersDao.findByUsername(TEST_USERNAME)).thenReturn(Optional.of(user));
 
         assertDoesNotThrow(()->{
             Authorization authorization = new Authorization(user, roles);
