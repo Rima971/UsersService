@@ -1,6 +1,7 @@
 package com.swiggy.authenticator.controllers;
 
 import com.swiggy.authenticator.dtos.CustomerRequestDto;
+import com.swiggy.authenticator.dtos.CustomerResponseDto;
 import com.swiggy.authenticator.dtos.GenericHttpResponse;
 import com.swiggy.authenticator.entities.Customer;
 import com.swiggy.authenticator.services.CustomersService;
@@ -20,6 +21,6 @@ public class CustomersController {
     @PostMapping("")
     public ResponseEntity<GenericHttpResponse> create(@Valid @RequestBody CustomerRequestDto customerRequestDto){
         Customer savedCustomer = this.customersService.create(customerRequestDto);
-        return GenericHttpResponse.create(HttpStatus.CREATED, CUSTOMER_SUCCESSFULLY_CREATED, savedCustomer);
+        return GenericHttpResponse.create(HttpStatus.CREATED, CUSTOMER_SUCCESSFULLY_CREATED, new CustomerResponseDto(savedCustomer.getId(), savedCustomer.getUser().getId(), savedCustomer.getDeliveryLocationPincode()));
     }
 }
