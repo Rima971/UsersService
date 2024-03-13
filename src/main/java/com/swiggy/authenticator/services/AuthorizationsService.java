@@ -1,5 +1,6 @@
 package com.swiggy.authenticator.services;
 
+import com.swiggy.authenticator.dtos.AuthorizeRequestDto;
 import com.swiggy.authenticator.dtos.AuthorizeResponseDto;
 import com.swiggy.authenticator.entities.Authorization;
 import com.swiggy.authenticator.entities.User;
@@ -16,9 +17,9 @@ import java.util.List;
 public class AuthorizationsService {
     @Autowired
     private UsersDao usersDao;
-    public AuthorizeResponseDto create(String username, List<UserRole> acceptableRoles) throws UserNotFoundException {
+    public AuthorizeResponseDto create(String username, AuthorizeRequestDto dto) throws UserNotFoundException {
         User user = this.usersDao.findByUsername(username).orElseThrow(UserNotFoundException::new);
-        Authorization authorization = new Authorization(user, acceptableRoles);
+        Authorization authorization = new Authorization(user, dto.getAcceptableRoles());
         return new AuthorizeResponseDto(authorization.isAuthorized(), user.getId());
     }
 }

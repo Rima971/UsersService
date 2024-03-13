@@ -1,5 +1,6 @@
 package com.swiggy.authenticator.services;
 
+import com.swiggy.authenticator.dtos.AuthorizeRequestDto;
 import com.swiggy.authenticator.dtos.AuthorizeResponseDto;
 import com.swiggy.authenticator.entities.User;
 import com.swiggy.authenticator.enums.UserRole;
@@ -34,7 +35,7 @@ public class AuthorizationServiceTest {
     }
     @Test
     public void test_shouldAuthorizeUserWithAcceptableRole(){
-        AuthorizeResponseDto response = assertDoesNotThrow(()->this.authorizationsService.create(TEST_USERNAME, List.of(UserRole.ADMIN, UserRole.CUSTOMER)));
+        AuthorizeResponseDto response = assertDoesNotThrow(()->this.authorizationsService.create(TEST_USERNAME, new AuthorizeRequestDto(List.of(UserRole.ADMIN, UserRole.CUSTOMER))));
         assertNotNull(response);
         assertTrue(response.isAuthorized());
         assertEquals(this.testUser.getId(), response.getUserId());
@@ -42,7 +43,7 @@ public class AuthorizationServiceTest {
 
     @Test
     public void test_shouldUnauthorizeUserWithUnacceptableRole(){
-        AuthorizeResponseDto response = assertDoesNotThrow(()->this.authorizationsService.create(TEST_USERNAME, List.of(UserRole.DELIVERY_AGENT, UserRole.CUSTOMER)));
+        AuthorizeResponseDto response = assertDoesNotThrow(()->this.authorizationsService.create(TEST_USERNAME, new AuthorizeRequestDto(List.of(UserRole.DELIVERY_AGENT, UserRole.CUSTOMER))));
         assertNotNull(response);
         assertFalse(response.isAuthorized());
         assertEquals(0, response.getUserId());

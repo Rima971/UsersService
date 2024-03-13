@@ -2,8 +2,13 @@ package com.swiggy.authenticator.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swiggy.authenticator.authentication.CustomUserDetails;
+import com.swiggy.authenticator.dtos.AuthorizeRequestDto;
+import com.swiggy.authenticator.dtos.AuthorizeResponseDto;
 import com.swiggy.authenticator.dtos.CustomerRequestDto;
 import com.swiggy.authenticator.entities.Customer;
+import com.swiggy.authenticator.entities.User;
+import com.swiggy.authenticator.enums.UserRole;
+import com.swiggy.authenticator.services.AuthorizationsService;
 import com.swiggy.authenticator.services.CustomersService;
 import com.swiggy.authenticator.services.UsersService;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,10 +21,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
+
 import static com.swiggy.authenticator.TestConstants.*;
+import static com.swiggy.authenticator.constants.SuccessMessage.AUTHORIZATION_SUCCESSFULLY_CREATED;
 import static com.swiggy.authenticator.constants.SuccessMessage.CUSTOMER_SUCCESSFULLY_CREATED;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -31,9 +38,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class CustomersControllerTest {
-    public static final String BASE_URL = "/api/customers";
-    public static final String PASSWORD = "93210eec-ceaa-47c9-bb6e-b03d9bcc040a";
+public class AuthorizationsControllerTest {
+    public static final String BASE_URL = "/api/authorizations";
     @Autowired
     private MockMvc mockMvc;
 
@@ -41,45 +47,34 @@ public class CustomersControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private CustomersService mockedCustomersService;
+    private AuthorizationsService mockedAuthorizationsService;
     @MockBean
     private UsersService mockedUsersService;
 
     @Spy
-    private Customer testCustomer = new Customer(TEST_CUSTOMER_USERNAME, new BCryptPasswordEncoder().encode(TEST_CUSTOMER_PASSWORD), TEST_CUSTOMER_PINCODE);
+    private User testUser = new User(TEST_USERNAME, new BCryptPasswordEncoder().encode(TEST_PASSWORD), UserRole.ADMIN);
 
     @BeforeEach
     public void setUp(){
         openMocks(this);
-        when(this.mockedCustomersService.create(any(CustomerRequestDto.class))).thenReturn(this.testCustomer);
-//        when(this.mockedUsersService.loadUserByUsername(TEST_CUSTOMER_USERNAME)).thenReturn(new CustomUserDetails(this.testCustomer.getUser()));
+        when(this.mockedUsersService.loadUserByUsername(TEST_USERNAME)).thenReturn(new CustomUserDetails(this.testUser));
     }
 
     @Test
-    public void test_shouldCreateACustomerSuccessfully() throws Exception{
-        String mappedRequest = this.objectMapper.writeValueAsString(new CustomerRequestDto(TEST_CUSTOMER_USERNAME, TEST_CUSTOMER_PASSWORD, TEST_CUSTOMER_PINCODE));
+    public void test_shouldAuthorizeAUserWithAcceptableRole() throws Exception{
+        when(this.mockedAuthorizationsService.create(eq(TEST_USERNAME), any(AuthorizeRequestDto.class))).thenReturn(new AuthorizeResponseDto(true, TEST_USER_ID));
+        String mappedRequest = this.objectMapper.writeValueAsString(new AuthorizeRequestDto(List.of(UserRole.ADMIN)));
 
-        this.mockMvc.perform(post(BASE_URL).contentType(MediaType.APPLICATION_JSON).content(mappedRequest))
+        this.mockMvc.perform(post(BASE_URL).contentType(MediaType.APPLICATION_JSON).content(mappedRequest).with(httpBasic(TEST_USERNAME, TEST_PASSWORD)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.status").value(HttpStatus.CREATED.name()))
                 .andExpect(jsonPath("$.statusCode").value(HttpStatus.CREATED.value()))
-                .andExpect(jsonPath("$.message").value(CUSTOMER_SUCCESSFULLY_CREATED))
-                .andExpect(jsonPath("$.data.id").value(TEST_CUSTOMER_ID))
+                .andExpect(jsonPath("$.message").value(AUTHORIZATION_SUCCESSFULLY_CREATED))
                 .andExpect(jsonPath("$.data.userId").value(TEST_USER_ID))
-                .andExpect(jsonPath("$.data.deliveryLocationPincode").value(TEST_CUSTOMER_PINCODE));
-        verify(this.mockedCustomersService, times(1)).create(any(CustomerRequestDto.class));
+                .andExpect(jsonPath("$.data.authorized").value(true));
+        verify(this.mockedAuthorizationsService, times(1)).create(eq(TEST_USERNAME), any(AuthorizeRequestDto.class));
     }
 
-    @Test
-    public void test_shouldFetchAllCustomersSuccessfullyIfNoUserIdPassed(){}
-    @Test
-    public void test_shouldFetchAllCustomersSuccessfullyIfUserIdPassed(){}
-
-    @Test
-    public void test_shouldFetchACustomersSuccessfullyIfGivenIdIsValid(){}
-
-    @Test
-    public void test_shouldThrow409ConflictCustomerNotFoundExceptionIfGivenIdIsInvalid(){}
 
 
 }

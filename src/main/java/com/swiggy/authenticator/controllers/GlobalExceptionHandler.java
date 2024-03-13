@@ -1,6 +1,7 @@
 package com.swiggy.authenticator.controllers;
 
 import com.swiggy.authenticator.dtos.GenericHttpResponse;
+import com.swiggy.authenticator.exceptions.CustomerNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,10 @@ public class GlobalExceptionHandler {
 
         return GenericHttpResponse.create(HttpStatus.BAD_REQUEST, INVALID_REQUEST, errors);
     }
-
+    @ExceptionHandler(CustomerNotFoundException.class)
+    public ResponseEntity<GenericHttpResponse> invalidCustomerId(CustomerNotFoundException e, HttpServletRequest request) {
+        return GenericHttpResponse.create(HttpStatus.BAD_REQUEST, CUSTOMER_NOT_FOUND, null);
+    }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<GenericHttpResponse> duplicateRestaurantName(Exception e){
         return GenericHttpResponse.create(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), null);
