@@ -4,6 +4,7 @@ import com.swiggy.authenticator.authentication.CustomUserDetails;
 import com.swiggy.authenticator.dtos.AuthorizeRequestDto;
 import com.swiggy.authenticator.dtos.AuthorizeResponseDto;
 import com.swiggy.authenticator.dtos.GenericHttpResponse;
+import com.swiggy.authenticator.exceptions.UserNotAuthorizedException;
 import com.swiggy.authenticator.services.AuthorizationsService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +25,8 @@ public class AuthorizationsController {
     private AuthorizationsService authorizationsService;
 
     @PostMapping("")
-    public ResponseEntity<GenericHttpResponse> create(Authentication authentication, @Valid @RequestBody AuthorizeRequestDto authorizeRequestDto){
+    public ResponseEntity<GenericHttpResponse> create(Authentication authentication, @Valid @RequestBody AuthorizeRequestDto authorizeRequestDto) throws UserNotAuthorizedException {
         CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
-        System.out.println(user.getUsername()+user.getPassword());
 
         AuthorizeResponseDto response = this.authorizationsService.create(user.getUsername(), authorizeRequestDto);
         return GenericHttpResponse.create(HttpStatus.CREATED, AUTHORIZATION_SUCCESSFULLY_CREATED, response);

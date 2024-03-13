@@ -2,6 +2,7 @@ package com.swiggy.authenticator.controllers;
 
 import com.swiggy.authenticator.dtos.GenericHttpResponse;
 import com.swiggy.authenticator.exceptions.CustomerNotFoundException;
+import com.swiggy.authenticator.exceptions.UserNotAuthorizedException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CustomerNotFoundException.class)
     public ResponseEntity<GenericHttpResponse> invalidCustomerId(CustomerNotFoundException e, HttpServletRequest request) {
         return GenericHttpResponse.create(HttpStatus.BAD_REQUEST, CUSTOMER_NOT_FOUND, null);
+    }
+
+    @ExceptionHandler(UserNotAuthorizedException.class)
+    public ResponseEntity<GenericHttpResponse> unauthorizedUser(UserNotAuthorizedException e, HttpServletRequest request) {
+        return GenericHttpResponse.create(HttpStatus.UNAUTHORIZED, USER_NOT_AUTHORIZED, null);
     }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<GenericHttpResponse> duplicateRestaurantName(Exception e){

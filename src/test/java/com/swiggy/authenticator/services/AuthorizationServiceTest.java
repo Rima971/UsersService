@@ -4,6 +4,7 @@ import com.swiggy.authenticator.dtos.AuthorizeRequestDto;
 import com.swiggy.authenticator.dtos.AuthorizeResponseDto;
 import com.swiggy.authenticator.entities.User;
 import com.swiggy.authenticator.enums.UserRole;
+import com.swiggy.authenticator.exceptions.UserNotAuthorizedException;
 import com.swiggy.authenticator.repositories.UsersDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,10 +43,7 @@ public class AuthorizationServiceTest {
     }
 
     @Test
-    public void test_shouldUnauthorizeUserWithUnacceptableRole(){
-        AuthorizeResponseDto response = assertDoesNotThrow(()->this.authorizationsService.create(TEST_USERNAME, new AuthorizeRequestDto(List.of(UserRole.DELIVERY_AGENT, UserRole.CUSTOMER))));
-        assertNotNull(response);
-        assertFalse(response.isAuthorized());
-        assertEquals(0, response.getUserId());
+    public void test_shouldThrowUserNotAuthorizedExceptionForUserWithoutAnyAcceptableRole(){
+        assertThrows(UserNotAuthorizedException.class, ()->this.authorizationsService.create(TEST_USERNAME, new AuthorizeRequestDto(List.of(UserRole.DELIVERY_AGENT, UserRole.CUSTOMER))));
     }
 }

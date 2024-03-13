@@ -8,9 +8,11 @@ import com.swiggy.authenticator.dtos.CustomerRequestDto;
 import com.swiggy.authenticator.entities.Customer;
 import com.swiggy.authenticator.entities.User;
 import com.swiggy.authenticator.enums.UserRole;
+import com.swiggy.authenticator.exceptions.UserNotAuthorizedException;
 import com.swiggy.authenticator.services.AuthorizationsService;
 import com.swiggy.authenticator.services.CustomersService;
 import com.swiggy.authenticator.services.UsersService;
+import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Spy;
@@ -26,8 +28,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static com.swiggy.authenticator.TestConstants.*;
-import static com.swiggy.authenticator.constants.SuccessMessage.AUTHORIZATION_SUCCESSFULLY_CREATED;
-import static com.swiggy.authenticator.constants.SuccessMessage.CUSTOMER_SUCCESSFULLY_CREATED;
+import static com.swiggy.authenticator.constants.ErrorMessage.*;
+import static com.swiggy.authenticator.constants.SuccessMessage.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.openMocks;
@@ -75,6 +77,18 @@ public class AuthorizationsControllerTest {
         verify(this.mockedAuthorizationsService, times(1)).create(eq(TEST_USERNAME), any(AuthorizeRequestDto.class));
     }
 
+    @Test
+    public void test_shouldThrow401UnauthorizedForAUserWithoutAnyAcceptableRole() throws Exception{
+        when(this.mockedAuthorizationsService.create(eq(TEST_USERNAME), any(AuthorizeRequestDto.class))).thenThrow(UserNotAuthorizedException.class);
+        String mappedRequest = this.objectMapper.writeValueAsString(new AuthorizeRequestDto(List.of(UserRole.CUSTOMER, UserRole.DELIVERY_AGENT)));
 
+        this.mockMvc.perform(post(BASE_URL).contentType(MediaType.APPLICATION_JSON).content(mappedRequest).with(httpBasic(TEST_USERNAME, TEST_PASSWORD)))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.status").value(HttpStatus.UNAUTHORIZED.name()))
+                .andExpect(jsonPath("$.statusCode").value(HttpStatus.UNAUTHORIZED.value()))
+                .andExpect(jsonPath("$.message").value(USER_NOT_AUTHORIZED))
+                .andExpect(jsonPath("$.data").value(IsNull.nullValue()));
+        verify(this.mockedAuthorizationsService, times(1)).create(eq(TEST_USERNAME), any(AuthorizeRequestDto.class));
+    }
 
 }
